@@ -42,11 +42,19 @@ computeTaxRateFraction (MouseEvent ev) = do
     pure $ 100.0 * (x / ow)
 
 
+data HourlyWageAction
+  = SetHourlyWageString1 String
+  | SetHourlyWageString2 String
+derive instance genericHourlyWageAction :: Generic HourlyWageAction _
+instance showHourlyWageAction :: Show HourlyWageAction where
+  show = genericShow
+
 data Action
   = Initialize
   | Noop String
   | SetTaxBracketStartString String
   | SetTaxBracketRateString String
+  | HourlyWageAction HourlyWageAction
   | AddTaxBracket (Maybe Number) (Maybe Number) (Maybe WebEvent)
   | DeleteTaxBracket (Seqnum "bracket")
   | TaxBracketProgressBarClicked (Seqnum "bracket") MouseEvent

@@ -29,10 +29,22 @@ type UIState =
   , newTaxBracketRateString :: String
   , newTaxBracketStart :: Maybe Number
   , newTaxBracketRate :: Maybe Number
+  , hourlyWage ::
+    { yearlyHours1String :: String
+    , yearlyHours2String :: String
+    }
+  }
+
+type Config =
+  { hourlyWage ::
+    { yearlyHours1 :: Number
+    , yearlyHours2 :: Number
+    }
   }
 
 type State =
   { seqnum :: Seqnum "state"
   , entities :: Entities
+  , config :: Config
   , ui :: UIState
   }

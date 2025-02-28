@@ -464,12 +464,12 @@ page { tracer } =
         ]
       , HH.p_
         [ HH.text "An extra assumption is that the perceived value is defined as how much you would earn if you were to work one extra day a week across the year. "
-        , HH.text "Thus the first hour corresponds to the share of your income filling lower tax brackets. "
+        , HH.text "Thus the first day corresponds to the share of your income filling lower tax brackets. "
         , HH.text "Then compare that to the perceived value of the last day of work, which is how much you would lose if you were to work four days a week across the year."
         , HH.text "If tax rates were flat, these values would be equal to one fifth (20%)."
         ]
       , HH.p_
-        [ HH.text "With typical tax brackets of increasing tax rates, we can see that the perceived value of the first and last hours of work are not commensurate. As workers enter new tax brackets, the marginal value of the last worked hour drops (as the increasing rate of the effective tax rate is steeper right after entering a tax bracket). "
+        [ HH.text "With typical tax brackets of increasing tax rates, we can see that the perceived value of the first and last days of work are not commensurate. As workers enter new tax brackets, the marginal value of the last worked day drops (as the increasing rate of the effective tax rate is steeper right after entering a tax bracket). "
         ]
       , HH.div
         [ reportKey "marginal-utility-chart"

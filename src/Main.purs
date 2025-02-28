@@ -82,6 +82,11 @@ component params pushReport =
                    Nothing
                 (Marginal.TaxBracketProgressBarClicked _ _) ->
                    Just $ key "click-tax-rate"
+                (Marginal.HourlyWageAction _) ->
+                   Just
+                   $ object
+                     [ kvStr "key" "hourly-wage-action"
+                     ]
 
     keyValStr key str =
       Json.jsonSingletonObject key (Json.fromString str)

@@ -61,3 +61,11 @@ handleAction tracer action =
         let modifyTaxBrackets st0 =
               map (modifyTaxBracket) st0.entities.taxBrackets
         H.modify_ (\st0 -> st0 { entities { taxBrackets = modifyTaxBrackets st0 }})
+
+    HourlyWageAction (SetHourlyWageString1 str) -> do
+      let nhours st0 = Maybe.fromMaybe st0.config.hourlyWage.yearlyHours1 $ Number.fromString str
+      H.modify_ (\st0 -> st0 { ui { hourlyWage { yearlyHours1String = str } }, config { hourlyWage { yearlyHours1 = nhours st0 } } })
+
+    HourlyWageAction (SetHourlyWageString2 str) -> do
+      let nhours st0 = Maybe.fromMaybe st0.config.hourlyWage.yearlyHours2 $ Number.fromString str
+      H.modify_ (\st0 -> st0 { ui { hourlyWage { yearlyHours2String = str } }, config { hourlyWage { yearlyHours2 = nhours st0 } } })

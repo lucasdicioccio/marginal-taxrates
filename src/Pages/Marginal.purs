@@ -2,7 +2,7 @@
 module Pages.Marginal where
 
 -------------------------------------------------------------------------------
-import Prelude (($),(<>),(==),(<<<),(||),bind,const,discard,map,show)
+import Prelude ((-),(*),($),(<>),(==),(<<<),(||),bind,const,discard,map,show)
 import Data.Array as Array
 import Data.Int as Int
 import Data.Maybe (Maybe(..))
@@ -25,13 +25,14 @@ import Minitools.Bricks.SetSearchSelector as SetSearchSelector
 import Minitools.Bricks.Table as Table
 
 -------------------------------------------------------------------------------
-import Pages.Marginal.Action (Action(..),WebEvent(..),MouseEvent(..))
+import Pages.Marginal.Action (Action(..),HourlyWageAction(..),WebEvent(..),MouseEvent(..))
 import Pages.Marginal.Trace (Trace(..))
 import Pages.Marginal.State (State,TaxBracket)
 import Pages.Marginal.Handlers as Handlers
 import Pages.Marginal.Slots (Slots, _charts)
 import Pages.Marginal.Computations as Computations
 import Utils (reportKey)
+import Widgets.Charts.HourlyRate as HourlyRateChart
 import Widgets.Charts.TaxBrackets as TaxBracketsChart
 import Widgets.Charts.TaxedAmounts as TaxedAmountsChart
 import Widgets.Charts.TakeHome as TakeHomeChart
@@ -42,28 +43,28 @@ import Widgets.Charts.MarginalUtility as MarginalUtilityChart
 frenchTaxBrackets2024 :: Array TaxBracket
 frenchTaxBrackets2024 =
   [ { seqnum: Seqnum.Seqnum 10, starting: 0.0, rate: 0.0 }
-  , { seqnum: Seqnum.Seqnum 11, starting: 11.498, rate: 11.0 }
-  , { seqnum: Seqnum.Seqnum 12, starting: 29.316, rate: 30.0 }
-  , { seqnum: Seqnum.Seqnum 13, starting: 83.824, rate: 41.0 }
-  , { seqnum: Seqnum.Seqnum 14, starting: 180.294, rate: 45.0 }
+  , { seqnum: Seqnum.Seqnum 11, starting: 11498.0, rate: 11.0 }
+  , { seqnum: Seqnum.Seqnum 12, starting: 29316.0, rate: 30.0 }
+  , { seqnum: Seqnum.Seqnum 13, starting: 83824.0, rate: 41.0 }
+  , { seqnum: Seqnum.Seqnum 14, starting: 180294.0, rate: 45.0 }
   ]
 
 frenchNfpBrackets2024 :: Array TaxBracket
 frenchNfpBrackets2024 =
   [ { seqnum: Seqnum.Seqnum 10, starting: 0.0, rate: 1.0 }
-  , { seqnum: Seqnum.Seqnum 11, starting: 10.292, rate: 5.0 }
-  , { seqnum: Seqnum.Seqnum 12, starting: 15.438, rate: 10.0 }
-  , { seqnum: Seqnum.Seqnum 13, starting: 20.584, rate: 15.0 }
-  , { seqnum: Seqnum.Seqnum 14, starting: 27.789, rate: 20.0 }
-  , { seqnum: Seqnum.Seqnum 15, starting: 30.876, rate: 25.0 }
-  , { seqnum: Seqnum.Seqnum 16, starting: 33.964, rate: 30.0 }
-  , { seqnum: Seqnum.Seqnum 17, starting: 38.081, rate: 35.0 }
-  , { seqnum: Seqnum.Seqnum 18, starting: 44.256, rate: 40.0 }
-  , { seqnum: Seqnum.Seqnum 19, starting: 61.752, rate: 45.0 }
-  , { seqnum: Seqnum.Seqnum 20, starting: 102.921, rate: 50.0 }
-  , { seqnum: Seqnum.Seqnum 21, starting: 144.089, rate: 55.0 }
-  , { seqnum: Seqnum.Seqnum 22, starting: 267.594, rate: 60.0 }
-  , { seqnum: Seqnum.Seqnum 23, starting: 411.693, rate: 90.0 }
+  , { seqnum: Seqnum.Seqnum 11, starting: 10292.0, rate: 5.0 }
+  , { seqnum: Seqnum.Seqnum 12, starting: 15438.0, rate: 10.0 }
+  , { seqnum: Seqnum.Seqnum 13, starting: 20584.0, rate: 15.0 }
+  , { seqnum: Seqnum.Seqnum 14, starting: 27789.0, rate: 20.0 }
+  , { seqnum: Seqnum.Seqnum 15, starting: 30876.0, rate: 25.0 }
+  , { seqnum: Seqnum.Seqnum 16, starting: 33964.0, rate: 30.0 }
+  , { seqnum: Seqnum.Seqnum 17, starting: 38081.0, rate: 35.0 }
+  , { seqnum: Seqnum.Seqnum 18, starting: 44256.0, rate: 40.0 }
+  , { seqnum: Seqnum.Seqnum 19, starting: 61752.0, rate: 45.0 }
+  , { seqnum: Seqnum.Seqnum 20, starting: 102921.0, rate: 50.0 }
+  , { seqnum: Seqnum.Seqnum 21, starting: 144089.0, rate: 55.0 }
+  , { seqnum: Seqnum.Seqnum 22, starting: 267594.0, rate: 60.0 }
+  , { seqnum: Seqnum.Seqnum 23, starting: 411693.0, rate: 90.0 }
   ]
 
 
@@ -79,6 +80,16 @@ state0 =
     , newTaxBracketRate: Just 5.0
     , newTaxBracketStartString: "1"
     , newTaxBracketRateString: "5"
+    , hourlyWage:
+      { yearlyHours1String: "1607"
+      , yearlyHours2String: "1760"
+      }
+    }
+  , config:
+    { hourlyWage:
+      { yearlyHours1: 1607.0
+      , yearlyHours2: 1760.0
+      }
     }
   }
 
@@ -481,6 +492,78 @@ page { tracer } =
             }
           , chart:
             { taxBrackets: state.entities.taxBrackets
+            }
+          }
+        ]
+      , HH.h3_
+        [ HH.text "hourly rate taken home comparisons"
+        ]
+      , HH.p_
+        [ HH.text "Another recurring theme of talks about wages and the fairness (or lack of) fairness in income tax is that income tax does not capture well the effective wage for people working more than a 'legal' work week. We can observe the effect (or lack of effect) by comparing effective take home amounts normalized by the amount of work hours."
+        ]
+      , HH.p_
+        [ HH.text "The following chart displays the effective hourly wage post tax for two work load (that you can adjust). By default, we compare 35hours/week during ~46 weeks (1607 hours) to 40hours/week during 220days (1760 hours), which are typical French arrangements for blue and white collar jobs."
+        ]
+      , HH.p_
+        [ HH.text "This comparison is probably only useful around the first few tax brackets as only a handful of jobs may have income in the larger brackets only from work. Thus, consider deleting some of the large brackets to get a better data resolution around the lower brackets."
+        ]
+      , HH.p_
+        [ HH.text "This simulation can be useful to gauge if a job promotion with higher wage but with an increased workload is really worth it (besides non-quantifiable aspects if you plan on making stepping stones in a career)."
+        ]
+      , HH.div
+        [ HP.classes [ HH.ClassName "control", HH.ClassName "columns" ]
+        , reportKey "hourly-wage-tweaks"
+        ]
+        [ HH.div
+          [ HP.classes [ HH.ClassName "field", HH.ClassName "column" ]
+          ]
+          [ HH.label
+            [ HP.class_ (HH.ClassName "label")
+            ]
+            [ HH.text "yearly worked hours for Group-1"
+            ]
+          , HH.input
+            [ HP.class_ (HH.ClassName "input")
+            , HP.type_ DOM.InputNumber
+            , HE.onValueChange (HourlyWageAction <<< SetHourlyWageString1)
+            , HP.value state.ui.hourlyWage.yearlyHours1String
+            ]
+          ]
+        , HH.div
+          [ HP.classes [ HH.ClassName "field", HH.ClassName "column" ]
+          ]
+          [ HH.label
+            [ HP.class_ (HH.ClassName "label")
+            ]
+            [ HH.text "yearly worked hours for Group-2"
+            ]
+          , HH.input
+            [ HP.class_ (HH.ClassName "input")
+            , HP.type_ DOM.InputNumber
+            , HE.onValueChange (HourlyWageAction <<< SetHourlyWageString2)
+            , HP.value state.ui.hourlyWage.yearlyHours2String
+            ]
+          ]
+        ]
+      , HH.p_
+        [ HH.text "The chart displays three curves: the two hourly-rate taken home post income tax for Group-1 and Group-2 (left axis). We also chart the"
+        , HH.text " "
+        , HH.em_ [ HH.text "situation equivalence" ]
+        , HH.text " (right axis)"
+        , HH.text ", which we define as the income at which point the group working fewer hours makes the same hourly wage taken home as the group working more hours. In another terms, this third chart reads the 'horizontal gap' at a given fixed Y-value."
+        ]
+      , HH.div
+        [ reportKey "hourly-wage-chart"
+        ]
+        [ HourlyRateChart.render
+          _charts
+          { actions:
+            { noop: Noop
+            }
+          , chart:
+            { taxBrackets: state.entities.taxBrackets
+            , yearlyHours1: state.config.hourlyWage.yearlyHours1
+            , yearlyHours2: state.config.hourlyWage.yearlyHours2
             }
           }
         ]

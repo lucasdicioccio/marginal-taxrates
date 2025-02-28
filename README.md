@@ -48,5 +48,4 @@ spago 0.93.29
 - extract and tests computations from charts
 - more lists of tax brackets from different countries/years
 - prettier input forms
-- add a conversion into hourly-income given a number of worked-hours per week
 - some indifference-curves at various (or user-tunable) incomes and worked-hours/off-hours per week
